@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <!-- Bootstrap CSS -->
+    <link href="resources/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/stylesheet.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+          rel="stylesheet">
+
+    <link href="./static/css/bulma.min.css" rel="stylesheet">
+    <link href="./static/css/bulma-carousel.min.css" rel="stylesheet">
+    <link href="./static/css/bulma-slider.min.css" rel="stylesheet">
+    <link href="./static/css/fontawesome.all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+          rel="stylesheet">
+    <link href="./static/css/index.css" rel="stylesheet">
+    <link href="./static/images/favicon.svg" rel="icon">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/bulma-slider.min.js"></script>
+    <script src="./static/js/index.js"></script>
+    <title>VASE: Object-Centric Shape and Appearance Manipulation of Real Videos</title>
+
+    <style>
+        .show-more-container.hidden {
+          display: none;
+        }
+        .hidden {
+         display: none;
+        }
+    </style>
+
+</head>
+<body>
+
+<section class="hero is-light">
+    <div class="hero-body">
+        <div class="container is-max-desktop align-content-between">
+            <div class="columns is-centered">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <h1 class="title is-1 publication-title">VASE: Object-Centric Shape and Appearance Manipulation of Real Videos</h1>
+
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block"><a href="https://helia95.github.io/">Elia Peruzzo</a><sup>1</sup>&nbsp;&nbsp;</span>
+                        <span class="author-block"><a href="https://vidit98.github.io/">Vidit Goel</a><sup>2</sup>&nbsp;&nbsp;</span>
+                        <span class="author-block"><a href="https://ir1d.github.io/">Deja Xu</a><sup>3</sup>&nbsp;&nbsp;</span>
+                        <span class="author-block"><a href="https://xingqian2018.github.io/">Xingqian Xu</a><sup>2</sup>&nbsp;&nbsp;</span>
+                        <span class="author-block"><a href="https://yifanjiang19.github.io/">Yifan Jiang</a><sup>3</sup>&nbsp;&nbsp;</span> <br>
+                        <span class="author-block"><a href="https://vita-group.github.io/">Zhangyang Wang</a><sup>2,3</sup>&nbsp;&nbsp;</span>
+                        <span class="author-block"><a href="https://www.humphreyshi.com/">Humphrey Shi</a><sup>2,4</sup>&nbsp;&nbsp;</span>
+                        <span class="author-block"><a href="https://disi.unitn.it/~sebe/">Nicu Sebe</a><sup>1</sup></span>
+                    </div>
+
+                     <div class="is-size-5 publication-authors">
+                        <span class="author-block"><sup>1</sup>University of Trento</span>&nbsp;&nbsp;
+                        <span class="author-block"><sup>2</sup>Picsart AI Research</span>&nbsp;&nbsp;
+                        <span class="author-block"><sup>3</sup>UT Austin</span>&nbsp;&nbsp;
+                         <span class="author-block"><sup>4</sup>Georgia Tech</span><br>
+                     </div>
+
+                    <!-- Arxiv Link. -->
+                    <span class="link-block">
+                        <a class="external-link button is-normal is-rounded is-dark"
+                           href="https://arxiv.org/">
+                          <span class="icon">
+                              <i class="ai ai-arxiv"></i>
+                          </span>
+                          <span>arXiv</span>
+                        </a>
+                    </span>
+                    <!-- Code Link. -->
+                    <span class="link-block">
+                        <a class="external-link button is-normal is-rounded is-dark"  href="">
+                          <span class="icon">
+                              <i class="fab fa-github"></i>
+                          </span>
+                          <span>Code (coming soon)</span>
+                       </a>
+                  </span>
+		    </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+<section class="hero teaser is-centered has-text-centered is-light">
+    <div class="container is-max-desktop">
+        <video autoplay controls muted loop playsinline height="100%">
+            <source src="videos/teaser.mp4">
+        </video>
+    </div>
+    <i>TL;DR: We edit an object of a real video modifying the shape through a keyframe and the appearance through a driving image.</i>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-2 is-centered has-text-centered">Abstract</h2>
+     <div class="">
+         <i> Recently, several works tackled the video editing task fostered by the success of large-scale text-to-image generative models. However, most of these methods holistically edit the frame using the text, exploiting the prior given by foundation diffusion models and focusing on improving the temporal consistency across frames. In this work, we introduce a framework that is object-centric and is designed to control both the object's appearance and, notably, to execute precise and explicit structural modifications on the object. We build our framework on a pre-trained image-conditioned diffusion model, integrate layers to handle the temporal dimension, and propose training strategies and architectural modifications to enable shape control. We evaluate our method on the image-driven video editing task showing similar performance to the state-of-the-art, and showcasing novel shape-editing capabilities. </i>
+     </div>
+  </div>
+</section>
+
+<hr>
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-2 is-centered has-text-centered">Method</h2>
+    <div class="hero is-full">
+      <div class="results-single">
+          <img src="assets/method.png" />
+      </div>
+        We enable video editing by conditioning the synthesis of the video on two branches, one that controls the appearance and
+        the other responsible for the motion and the structure of the object. To enable shape modifications, we propose a Joint Flow-Structure
+        Augmentation pipeline that outputs an augmented flow which is processed by a Flow-Completion Network, before going as input to the
+        final ControlNet module. Furthermore, we introduce an auxiliary loss, used to enhance the model fidelity to the input segmentation map.
+    </div>
+     <div class="">
+</div>
+  </div>
+</section>
+
+<hr>
+<section>
+    <div class="container is-max-desktop">
+    <h2 class="title is-2 is-centered has-text-centered">Results</h2>
+
+    <section class="hero is-light is-small">
+    <div class="hero-body">
+        <div class="container">
+            <div class="title is-5">Joint Apperance and Shape Edits</div>
+            <p>The objective is to alter the structure of one object in a source video, guided by the initial edited keyframe; simultaneously, a driver image is employed to edit the appearance. Note that the edit is restricted to one specific object, and the background should remain unaffected. The shape edits is shown for each frame only for visualization purposes, in practice only the first keyframe is provided</p>
+
+                        <!-- Grid column -->
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_low/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_low/red.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_low/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_low/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+
+            <!-- Grid column -->
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan_positive/green.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan_positive/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan_positive/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+
+           <!-- Grid column -->
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/camel/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/camel/red.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/camel/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/camel/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+
+            <!-- Grid column -->
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/train/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/train/red.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/train/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex" controls autoplay loop muted>
+						<source src="videos/shape/train/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+        </div>
+
+
+
+			<!-- Grid column -->
+        <div class="show-more-container hidden">
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan/red.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/blackswan/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+        </div>
+
+            <!-- Grid column -->
+            <div class="show-more-container hidden">
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_high/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_high/red.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_high/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/horsejump_high/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+            </div>
+
+            <!-- Grid column -->
+        <div class="show-more-container hidden">
+            <div class="row pt-3 nopadding">
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Source Video</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/bus/frames.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape Edits</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/bus/green.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>Shape-NLA [1]</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/bus/nla.mp4" type="video/mp4" />
+					</video>
+				</div>
+				<div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+					<h3>VASE (Our)</h3>
+					<video class="video-fluid w-100 flex"  controls autoplay loop muted>
+						<source src="videos/shape/bus/our.mp4" type="video/mp4" />
+					</video>
+				</div>
+			</div>
+        </div>
+    </div>
+    </section>
+
+    <hr>
+    <section class="hero is-light is-small">
+        <div class="hero-body">
+            <div class="container">
+                <div class="title is-5">Image Driven Appearance Editing</div>
+                <p>The model is tasked with editing a target object in a source video based on the guidance from a driver image. It is important to emphasize that both the structure of the object and the background should remain unchanged.</p>
+
+                <div class="row pt-3 nopadding">
+                    <!-- VIDEO -->
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Source Video</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/car_roundabout/frames.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Reference Image</h3>
+                        <img class="img-fluid w-100" src="videos/app/car_roundabout/reference.jpg" />
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>PAIR-Diffusion [2]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/car_roundabout/pair.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>FILM [3]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/car_roundabout/film.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>TokenFlow [4]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/car_roundabout/tk.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>VASE (Our)</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/car_roundabout/our.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+
+                <div class="row pt-3 nopadding">
+                    <!-- VIDEO -->
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Source Video</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/flamingo/frames.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Reference Image</h3>
+                        <img class="img-fluid w-100" src="videos/app/flamingo/reference.jpg" />
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>PAIR-Diffusion [2]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/flamingo/pair.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>FILM [3]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/flamingo/film.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>TokenFlow [4]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/flamingo/tk.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>VASE (Our)</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/flamingo/our.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+
+                <div class="show-more-container hidden">
+                <div class="row pt-3 nopadding">
+                    <!-- VIDEO -->
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Source Video</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/camel/frames.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Reference Image</h3>
+                        <img class="img-fluid w-100" src="videos/app/camel/reference.jpg" />
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>PAIR-Diffusion [2]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/camel/pair.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>FILM [3]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/camel/film.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>TokenFlow [4]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/camel/tk.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>VASE (Our)</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/camel/our.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                </div>
+
+                <div class="show-more-container hidden">
+                <div class="row pt-3 nopadding">
+                    <!-- VIDEO -->
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Source Video</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/mallard_fly/frames.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Reference Image</h3>
+                        <img class="img-fluid w-100" src="videos/app/mallard_fly/reference.jpg" />
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>PAIR-Diffusion [2]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/mallard_fly/pair.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>FILM [3]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/mallard_fly/film.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>TokenFlow [4]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/mallard_fly/tk.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>VASE (Our)</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/mallard_fly/our.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                </div>
+
+                <div class="show-more-container hidden">
+                <div class="row pt-3 nopadding">
+                    <!-- VIDEO -->
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Source Video</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/cows/frames.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Reference Image</h3>
+                        <img class="img-fluid w-100" src="videos/app/cows/reference.jpg" />
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>PAIR-Diffusion [2]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/cows/pair.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>FILM [3]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/cows/film.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>TokenFlow [4]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/cows/tk.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>VASE (Our)</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/cows/our.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                </div>
+
+
+                <div class="show-more-container hidden">
+                <div class="row pt-3 nopadding">
+                    <!-- VIDEO -->
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Source Video</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/rhino/frames.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>Reference Image</h3>
+                        <img class="img-fluid w-100" src="videos/app/rhino/reference.jpg" />
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center"></div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>PAIR-Diffusion [2]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/rhino/pair.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>FILM [3]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/rhino/film.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>TokenFlow [4]</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/rhino/tk.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="col-sm-3 col-lg-3 col-xl-3 p-0 text-center">
+                        <h3>VASE (Our)</h3>
+                        <video class="video-fluid w-100 flex" controls autoplay loop muted>
+                            <source src="videos/app/rhino/our.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+                <br>
+            <div class="is-centered has-text-centered">
+                <button id="toggleButton">Show More Videos</button>
+            </div>
+</div>
+</section>
+
+
+
+
+<hr>
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title is-2 is-centered has-text-centered">BibTeX</h2>
+      <pre><code>
+
+      </code></pre>
+    </div>
+</section>
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column custom-width">
+          <!-- <h2 class="title is-3"></h2> -->
+          <div class="content has-text-justified">
+              <p>
+            <a name="ref-shape" id="ref-shape"></a>
+            [1] Yao-Chih Lee, Ji-Ze Genevieve Jang, Yi-Ting Chen, Elizabeth Qiu, Jia-Bin Huang. Shape-aware Text-driven Layered Video Editing. CVPR, 2023.
+            </p>
+            <p>
+              <a name="ref-pair" id="ref-pair"></a>
+              [2] Vidit Goel, Elia Peruzzo, Yifan Jiang, Dejia Xu, Xingqian Xu, Nicu Sebe, Trevor Darrell, Zhangyang Wang, Humphrey Shi. PAIR-Diffusion: A Comprehensive Multimodal Object-Level Image Editor. arXiv preprint 2023.
+            </p>
+            <p>
+              <a name="ref-film" id="ref-film"></a>
+              [3] Fitsum Reda, Janne Kontkanen, Eric Tabellion, Deqing Sun, Caroline Pantofaru, and Brian Curless. Film: Frame interpolation for large motion. ECCV, 2022.
+            </p>
+          <p>
+              <a name="ref-tokenflow" id="ref-tokenflow"></a>
+              [4] Michal Geyer, Omer Bar-Tal, Shai Bagon, and Tali Dekel. Tokenflow: Consistent diffusion features for consistent video editing. arXiv preprint 2023.
+            </p>
+        </div>
+      </div>
+    </div>
+</section>
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+            You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const buttons = document.querySelectorAll('[id^="toggleButton"]');
+  const containers = document.querySelectorAll('.show-more-container');
+
+  toggleButton.addEventListener('click', function () {
+    // Toggle the visibility of all show-more-containers
+    containers.forEach(function (container) {
+      container.classList.toggle('hidden');
+    });
+
+    // Change button text based on the visibility of the first container
+    if (containers[0].classList.contains('hidden')) {
+      toggleButton.innerText = 'Show More Videos';
+    } else {
+      toggleButton.innerText = 'Hide Videos';
+    }
+  });
+});
+</script>
+
+
+</body>
+</html>
